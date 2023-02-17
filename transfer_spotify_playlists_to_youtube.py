@@ -2,17 +2,15 @@
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-import json
 from dotenv import load_dotenv
 
-scope = 'user-library-read'
-
-if __name__ == '__main__':
+def get_spotify_songs():
     load_dotenv()
+    scope = 'user-library-read'
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
     song_lists = []
-    
+
     limit = 50
     offset = 0
 
@@ -23,14 +21,17 @@ if __name__ == '__main__':
 
         for item in results['items']:
             track = item['track']
-            artist_names = []
-
+            track_info = track['name']
             for artist in track['artists']:
-                artist_names.append(artist['name'])
+                track_info += ' ' + artist['name']
 
-            song_lists.append({'title': track['name'], 'artist(s)': artist_names})
+            song_lists.append(track_info)
 
         offset += limit
 
-    # print(json.dumps(song_lists))
-    print('Number of songs:', len(song_lists))
+    return song_lists
+
+
+if __name__ == '__main__':
+    spotify_songs = get_spotify_songs()
+    print(spotify_songs)
