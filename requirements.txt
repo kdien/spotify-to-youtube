@@ -1,0 +1,4 @@
+ytmusicapi
+python_dotenv
+spotipy
+redis
