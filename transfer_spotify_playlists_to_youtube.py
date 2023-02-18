@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+import os
+from dotenv import load_dotenv
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from dotenv import load_dotenv
+from ytmusicapi import YTMusic
+
 
 def get_spotify_songs():
-    load_dotenv()
     scope = 'user-library-read'
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
@@ -32,6 +34,27 @@ def get_spotify_songs():
     return song_lists
 
 
+def add_songs_to_yt_music(songs):
+    yt_brand_account = os.getenv('YT_BRAND_ACCOUNT')
+    if yt_brand_account:
+        ytmusic = YTMusic('headers_auth.json', yt_brand_account)
+    else:
+        ytmusic = YTMusic('headers_auth.json')
+
+    playlist_id = ytmusic.create_playlist(title='Liked Songs', description='Liked Songs', privacy_status='PRIVATE')
+
+    for song in songs:
+        print(f"Processing \"{song['title']}\" by {song['artist(s)']}")
+
+        query = song['title']
+        for artist in song['artist(s)']:
+            query += ' ' + artist
+
+        search_results = ytmusic.search(query=query, filter='songs')
+        ytmusic.add_playlist_items(playlist_id, [search_results[0]['videoId']])
+
+
 if __name__ == '__main__':
+    load_dotenv()
     spotify_songs = get_spotify_songs()
-    print(spotify_songs)
+    add_songs_to_yt_music(spotify_songs)
