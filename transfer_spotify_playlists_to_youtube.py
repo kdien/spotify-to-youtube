@@ -8,6 +8,8 @@ from ytmusicapi import YTMusic
 
 
 def get_spotify_songs():
+    print('Fetching songs from Spotify "Liked Songs" playlist...')
+
     scope = 'user-library-read'
     sp = spotipy.Spotify(auth_manager=SpotifyOAuth(scope=scope))
 
@@ -31,10 +33,13 @@ def get_spotify_songs():
 
         offset += limit
 
+    print('Finished!')
     return song_lists
 
 
 def add_songs_to_yt_music(songs):
+    print('Searching and adding songs to YouTube Music...')
+
     yt_brand_account = os.getenv('YT_BRAND_ACCOUNT')
     if yt_brand_account:
         ytmusic = YTMusic('headers_auth.json', yt_brand_account)
@@ -52,6 +57,8 @@ def add_songs_to_yt_music(songs):
 
         search_results = ytmusic.search(query=query, filter='songs')
         ytmusic.add_playlist_items(playlist_id, [search_results[0]['videoId']])
+
+    print('Done!')
 
 
 if __name__ == '__main__':
