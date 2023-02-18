@@ -21,11 +21,11 @@ def get_spotify_songs():
 
         for item in results['items']:
             track = item['track']
-            track_info = track['name']
+            artist_names = []
             for artist in track['artists']:
-                track_info += ' ' + artist['name']
+                artist_names.append(artist['name'])
 
-            song_lists.append(track_info)
+            song_lists.append({'title': track['name'], 'artist(s)': artist_names})
 
         offset += limit
 
